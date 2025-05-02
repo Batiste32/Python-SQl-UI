@@ -1,0 +1,13 @@
+DROP TABLE Games;
+DROP TABLE Platforms;
+DROP TABLE Games_Platforms;
+DROP TABLE DLC;
+DROP TABLE Genres;
+DROP TABLE Games_Genres;
+DROP TABLE Players;
+DROP TABLE Players_Games;
+DROP TABLE Localisation;
+DROP VIEW Games_Platforms_View;
+DROP VIEW Games_Genres_View;
+DROP VIEW Players_Genres_View;
+DROP VIEW Games_DLCS_View;
