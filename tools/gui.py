@@ -26,6 +26,12 @@ def refresh_table(table_name, table_frame, edit_frame):
     handler(sql.view_table, [table_name],
             lambda *args : display_table_gui(*args, table_frame, edit_frame, table_name),
             messagebox.showerror)
+    
+def refresh_table_list(dropdown):
+    new_table_list = sql.get_table_list()
+    dropdown['values'] = new_table_list
+    if new_table_list:
+        dropdown.set(new_table_list[0])
 
 def on_edit(event):
     global selected_item
@@ -143,7 +149,7 @@ def get_id_list(listbox):
         selected_game_ids.append(game_id)
     return selected_game_ids
 
-def execute_custom_query(sql_text,query_result_frame):
+def execute_custom_query(root,sql_text,query_result_frame):
     query = sql_text.get("1.0", tk.END).strip()
     if not query:
         messagebox.showerror("Error", "Please enter a SQL query.")
@@ -171,6 +177,7 @@ def execute_custom_query(sql_text,query_result_frame):
             else:
                 conn.commit()
                 messagebox.showinfo("Success", "Query executed successfully.")
+                root.event_generate('<<TableCreated>>')
     except Exception as e:
         messagebox.showerror("Query Error", str(e))
 

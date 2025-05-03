@@ -20,7 +20,7 @@ table_name_entry = tk.Entry(creation_frame)
 table_name_entry.grid(row=0,column=1)
 table_rows_frame = tk.Frame(creation_frame)
 table_rows_frame.grid(row=1,column=0,columnspan=2)
-sect.create_table_ui(table_rows_frame,table_name_entry,sql.get_table_list())
+sect.create_table_ui(root,table_rows_frame,table_name_entry,sql.get_table_list())
 
 # Managing Section
 manager_frame = tk.Frame(root, bd=2, relief="solid")
@@ -56,6 +56,7 @@ table_list = sql.get_table_list()
 table_var = tk.StringVar()
 table_dropdown = ttk.Combobox(viewer_frame, textvariable=table_var, values=table_list, state="readonly")
 table_dropdown.bind('<<ComboboxSelected>>', lambda event : gui.refresh_table(table_var.get(),table_frame,edit_frame))
+root.bind('<<TableCreated>>', lambda event : gui.refresh_table_list(table_dropdown))
 table_dropdown.grid(row=0, column=1)
 table_dropdown.set(table_list[0])  # Default select first table
 
@@ -94,7 +95,7 @@ sql_text = tk.Text(request_frame, height=5, width=80)
 sql_text.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
 
 # Execute button
-tk.Button(request_frame, text="Execute Query", command=lambda : gui.execute_custom_query(sql_text,query_result_frame)).grid(row=3, column=0, columnspan=2)
+tk.Button(request_frame, text="Execute Query", command=lambda : gui.execute_custom_query(root,sql_text,query_result_frame)).grid(row=3, column=0, columnspan=2)
 
 # Frame for query result
 query_result_frame = tk.Frame(request_frame)

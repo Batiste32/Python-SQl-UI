@@ -123,7 +123,7 @@ def dlc_section(frame):
                             ],
                             messagebox.showinfo, messagebox.showerror)).grid(row=4, column=0, columnspan=2)
     
-def create_table_ui(parent_frame, table_name_entry, foreign_tables=[]):
+def create_table_ui(root, parent_frame, table_name_entry, foreign_tables=[]):
     global field_rows
     field_rows = []
 
@@ -170,8 +170,12 @@ def create_table_ui(parent_frame, table_name_entry, foreign_tables=[]):
         for r in field_rows:
             r['fk']['values'] = [""] + field_names + foreign_tables
 
+    def table_creation_sequence():
+        sql.build_table(table_name_entry.get(),field_rows)
+        root.event_generate('<<TableCreated>>')
+
     # Add field button
     tk.Button(parent_frame, text="Add Field", command=add_field).grid(row=100, column=0, columnspan=2, pady=10)
     
     # Build Table button
-    tk.Button(parent_frame, text="Create Table", command=lambda : sql.build_table(table_name_entry.get(),field_rows)).grid(row=100, column=2, columnspan=3, pady=10)
+    tk.Button(parent_frame, text="Create Table", command=table_creation_sequence).grid(row=100, column=2, columnspan=3, pady=10)
