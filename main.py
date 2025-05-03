@@ -12,9 +12,19 @@ edit_entries = []
 root = tk.Tk()
 root.title("SQL GUI")
 
+# Table Creation Section
+creation_frame = tk.Frame(root, bd=2, relief="solid")
+creation_frame.grid(row=0,column=0,sticky="nsew",ipadx=10,ipady=5)
+tk.Label(creation_frame, text="Table Name").grid(row=0,column=0)
+table_name_entry = tk.Entry(creation_frame)
+table_name_entry.grid(row=0,column=1)
+table_rows_frame = tk.Frame(creation_frame)
+table_rows_frame.grid(row=1,column=0,columnspan=2)
+sect.create_table_ui(table_rows_frame,table_name_entry,sql.get_table_list())
+
 # Managing Section
 manager_frame = tk.Frame(root, bd=2, relief="solid")
-manager_frame.grid(row=0,column=0,sticky="nsew",ipadx=10,ipady=5)
+manager_frame.grid(row=0,column=1,sticky="nsew",ipadx=10,ipady=5)
 adding_list = ["Game","Player","DLC"]
 def switch_section(frame):
     for widget in frame.winfo_children():
@@ -37,7 +47,7 @@ adding_frame.grid(row=1,column=0,columnspan=2)
 sect.game_section(adding_frame)
 
 viewer_frame = tk.Frame(root, bd=2, relief="solid")
-viewer_frame.grid(row=0,column=1,sticky="nsew",ipadx=10,ipady=5)
+viewer_frame.grid(row=0,column=2,sticky="nsew",ipadx=10,ipady=5)
 # Table name entry
 tk.Label(viewer_frame, text="Table Name").grid(row=0, column=0)
 
@@ -51,7 +61,7 @@ table_dropdown.set(table_list[0])  # Default select first table
 
 tk.Button(viewer_frame, text="Refresh Table",
         command=lambda : gui.refresh_table(table_var.get(),table_frame,edit_frame)
-        ).grid(row=1, column=0, columnspan=2)
+        ).grid(row=1, column=0, columnspan=2) 
 
 # Editable fields for selected row
 edit_frame = tk.Frame(viewer_frame)
@@ -69,7 +79,7 @@ table_frame.grid(row=4, column=0, columnspan=2, sticky="nsew")
 gui.refresh_table(table_var.get(),table_frame,edit_frame)
 
 request_frame = tk.Frame(root, bd=2, relief="solid")
-request_frame.grid(row=0,column=2,sticky="nsew",ipadx=10,ipady=5)
+request_frame.grid(row=0,column=3,sticky="nsew",ipadx=10,ipady=5)
 # Saved Queries
 comments_queries = sql.extract_queries_from_file("queries.sql")
 query_descriptions = [desc for desc, _ in comments_queries]
@@ -89,7 +99,5 @@ tk.Button(request_frame, text="Execute Query", command=lambda : gui.execute_cust
 # Frame for query result
 query_result_frame = tk.Frame(request_frame)
 query_result_frame.grid(row=4, column=0, columnspan=2, sticky="nsew")
-
-
 
 root.mainloop()

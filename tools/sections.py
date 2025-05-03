@@ -122,3 +122,56 @@ def dlc_section(frame):
                             [gameid_var.get(), entry_dlcname.get(), date_picker.get(), entry_description.get()]
                             ],
                             messagebox.showinfo, messagebox.showerror)).grid(row=4, column=0, columnspan=2)
+    
+def create_table_ui(parent_frame, table_name_entry, foreign_tables=[]):
+    global field_rows
+    field_rows = []
+
+    for widget in parent_frame.winfo_children():
+        widget.destroy()
+
+    header = ['Name', 'Type', 'PK', 'AI', 'Not Null', 'FK To']
+    for col, title in enumerate(header):
+        tk.Label(parent_frame, text=title, font=('Arial', 10, 'bold')).grid(row=0, column=col, padx=5, pady=2)
+
+    def add_field():
+        row_index = len(field_rows) + 1
+        row = {}
+
+        # Field name
+        row['name'] = tk.Entry(parent_frame)
+        row['name'].grid(row=row_index, column=0, padx=5, pady=2)
+
+        # Type dropdown
+        row['type'] = ttk.Combobox(parent_frame, values=["INTEGER", "TEXT", "REAL", "BLOB"], state="readonly")
+        row['type'].grid(row=row_index, column=1)
+        row['type'].set("TEXT")
+
+        # Checkboxes
+        row['pk'] = tk.IntVar()
+        row['ai'] = tk.IntVar()
+        row['not_null'] = tk.IntVar()
+        tk.Checkbutton(parent_frame, variable=row['pk']).grid(row=row_index, column=2)
+        tk.Checkbutton(parent_frame, variable=row['ai']).grid(row=row_index, column=3)
+        tk.Checkbutton(parent_frame, variable=row['not_null']).grid(row=row_index, column=4)
+
+        # Foreign key dropdown (we fill it later)
+        row['fk'] = ttk.Combobox(parent_frame, state="readonly")
+        row['fk'].grid(row=row_index, column=5)
+        row['fk']['values'] = [""] + [f"{r['name'].get()}" for r in field_rows] + foreign_tables
+
+        field_rows.append(row)
+
+        # Refresh FK dropdowns to include new row names
+        update_fk_dropdowns()
+
+    def update_fk_dropdowns():
+        field_names = [r['name'].get() for r in field_rows if r['name'].get()]
+        for r in field_rows:
+            r['fk']['values'] = [""] + field_names + foreign_tables
+
+    # Add field button
+    tk.Button(parent_frame, text="Add Field", command=add_field).grid(row=100, column=0, columnspan=2, pady=10)
+    
+    # Build Table button
+    tk.Button(parent_frame, text="Create Table", command=lambda : sql.build_table(table_name_entry.get(),field_rows)).grid(row=100, column=2, columnspan=3, pady=10)

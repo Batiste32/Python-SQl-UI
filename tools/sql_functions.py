@@ -85,3 +85,46 @@ def extract_queries_from_file(filepath):
                 current_query = []
                 current_description = None
     return queries
+
+def execute_query(query):
+    try:
+        with sqlite3.connect("games.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+
+            if query.lower().startswith("select"):
+                pass
+            else:
+                conn.commit()
+    except Exception as e:
+        raise(e)
+
+def build_table(table_name,field_rows):
+    columns_sql = []
+    foreign_keys = []
+
+    for row in field_rows:
+        name = row['name'].get()
+        type_ = row['type'].get()
+        pk = row['pk'].get()
+        ai = row['ai'].get()
+        nn = row['not_null'].get()
+        fk = row['fk'].get()
+
+        if not name or not type_:
+            continue  # Skip empty or incomplete rows
+
+        col_def = f"{name} {type_}"
+        if pk:
+            col_def += " PRIMARY KEY"
+        if ai:
+            col_def += " AUTOINCREMENT"
+        if nn:
+            col_def += " NOT NULL"
+        columns_sql.append(col_def)
+
+        if fk:
+            foreign_keys.append(f"FOREIGN KEY ({name}) REFERENCES {fk}(id)")
+
+    full_sql = f"CREATE TABLE {table_name} (\n  " + ",\n  ".join(columns_sql + foreign_keys) + "\n);"
+    execute_query(full_sql)
